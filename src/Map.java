@@ -44,17 +44,19 @@ public class Map {
 
     public void draw(Graphics g) {
         int[][] map = levels[currentLevel];
+
         for (int r = 0; r < map.length; r++) {
             for (int c = 0; c < map[0].length; c++) {
+
                 int px = c * TILE_SIZE;
                 int py = r * TILE_SIZE;
 
                 if (map[r][c] == 1) {
-                    g.setColor(Color.DARK_GRAY);
+                    g.setColor(new Color(50, 50, 50));
                 } else if (map[r][c] == 3) {
-                    g.setColor(Color.CYAN);
+                    g.setColor(Color.ORANGE);
                 } else {
-                    g.setColor(Color.LIGHT_GRAY);
+                    g.setColor(new Color(180, 180, 180));
                 }
 
                 g.fillRect(px, py, TILE_SIZE, TILE_SIZE);
@@ -64,7 +66,7 @@ public class Map {
         }
     }
 
-    public boolean isGameWon() {
-        return currentLevel >= levels.length;
+    public int getTotalLevels() {
+        return levels.length;
     }
 }
