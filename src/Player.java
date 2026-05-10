@@ -6,7 +6,7 @@ public class Player {
         this.x = x;
         this.y = y;
     }
-
+//ngedit
     public void move(int dx, int dy) {
         this.x += dx;
         this.y += dy;
