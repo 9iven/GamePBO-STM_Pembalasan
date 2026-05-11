@@ -64,6 +64,9 @@ public class Map {
         allLevelEnemies.get(0).add(new Enemy(7, 2));
 
         allLevelEnemies.get(1).add(new Enemy(6, 1));
+        allLevelEnemies.get(1).add(new Enemy(7, 1));
+        allLevelEnemies.get(1).add(new Enemy(11, 3));
+        allLevelEnemies.get(1).add(new Enemy(2, 3));
 
         allLevelEnemies.get(2).add(new Enemy(2, 2));
         allLevelEnemies.get(2).add(new Enemy(11, 2));

@@ -2,16 +2,24 @@ package actors.mainactors;
 
 public class Player extends TransferStudent {
     public int x, y;
-    public final int MAX_HP = 100;
+    // Hapus kata 'final' agar batas maksimal HP bisa bertambah saat Level Up
+    public int MAX_HP = 100;
     public int facingX = 0, facingY = 1;
     public int combo = 0;
 
-    // Menambahkan kembali atribut progres ekonomi dan waktu interogasi
     public int currency = 0;
     public double maxCombatTime = 4.0;
 
     public Player() {
         super("Siswa Pindahan", 100, 15, 100);
+    }
+
+    // MENGGUNAKAN METHOD levelUp():
+    // Melakukan overriding dari TransferStudent untuk menambah kapasitas MAX_HP
+    @Override
+    public void levelUp() {
+        super.levelUp(); // Memanggil logika kenaikan level dasar
+        this.MAX_HP += 25; // Menambah batas darah maksimal
     }
 
     public void setPosition(int x, int y) {
