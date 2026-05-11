@@ -1,8 +1,12 @@
+package main;
+
+import gameengine.Game;
 import javax.swing.JFrame;
 
+// Entry point program, fungsi utama untuk merakit dan menampilkan frame GUI
 public class Main {
     public static void main(String[] args) {
-        JFrame window = new JFrame("Tes Navigasi");
+        JFrame window = new JFrame("Disciplinary - Proyek Akhir PBO");
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setResizable(false);
 
@@ -13,6 +17,7 @@ public class Main {
         window.setLocationRelativeTo(null);
         window.setVisible(true);
 
-        gamePanel.requestFocusInWindow();
+        // Memulai thread game loop
+        gamePanel.startGameLoop();
     }
 }
