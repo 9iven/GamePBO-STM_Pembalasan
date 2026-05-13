@@ -18,8 +18,10 @@ public class Game extends JPanel implements KeyListener, ActionListener {
     private Renderer renderer = new Renderer();
     private Enemy activeEnemy;
 
-    private enum State { EXPLORE, COMBAT_INPUT, COMBAT_RESULT, GAME_OVER, WIN }
-    private State currentState = State.EXPLORE;
+    // 1. Tambahkan MENU pada enum
+    private enum State { MENU, EXPLORE, COMBAT_INPUT, COMBAT_RESULT, GAME_OVER, WIN }
+    // 2. Set state awal menjadi MENU
+    private State currentState = State.MENU;
 
     private Timer gameLoop;
     private double combatTimer = 0.0;
@@ -39,6 +41,23 @@ public class Game extends JPanel implements KeyListener, ActionListener {
     }
 
     public void startGameLoop() { gameLoop.start(); }
+
+    // 3. Tambahkan method resetGame untuk mengulang semuanya dari awal
+    private void resetGame() {
+        gameMap = new Map();
+        player = new Player();
+        gameMap.loadLevelPosition(player);
+        this.enemies = gameMap.getEnemiesForCurrentLevel();
+
+        logMessages.clear();
+        logMessage("Sistem Aktif. WASD: Bergerak, SPASI: Interaksi");
+
+        combatTimer = 0.0;
+        clashMultiplier = 1;
+        flashAlpha = 0;
+        playerSelection = 0;
+        currentState = State.EXPLORE;
+    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -66,24 +85,69 @@ public class Game extends JPanel implements KeyListener, ActionListener {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
+
+        // 4. Tampilan saat di Menu Utama
+        if (currentState == State.MENU) {
+            g.setColor(Color.WHITE);
+            g.setFont(new Font("Monospaced", Font.BOLD, 40));
+            g.drawString("DISCIPLINARY", UI_W + 100, H / 2 - 20);
+
+            g.setFont(new Font("Monospaced", Font.PLAIN, 20));
+            g.setColor(Color.YELLOW);
+            g.drawString("Tekan [SPASI] untuk Mulai", UI_W + 70, H / 2 + 30);
+            return; // Hentikan render komponen game lain
+        }
+
         renderer.drawUI(g, player, gameMap.currentLevel + 1, logMessages, UI_W, H);
         if (currentState == State.EXPLORE) renderer.drawWorld(g, gameMap, player, enemies, UI_W);
         else if (currentState == State.COMBAT_INPUT) renderer.drawCombat(g, activeEnemy, combatTimer, clashMultiplier, playerSelection, "", UI_W);
         else if (currentState == State.COMBAT_RESULT) renderer.drawCombat(g, activeEnemy, 0, clashMultiplier, playerSelection, combatMessage, UI_W);
-        else if (currentState == State.GAME_OVER) { g.setColor(Color.RED); g.setFont(new Font("Monospaced", Font.BOLD, 40)); g.drawString("SYSTEM FAILURE", UI_W + 150, 200); }
-        else if (currentState == State.WIN) { g.setColor(Color.GREEN); g.setFont(new Font("Monospaced", Font.BOLD, 40)); g.drawString("AREA CLEARED", UI_W + 180, 200); }
+
+            // 5. Tampilan dan Teks Keterangan Tombol saat Kalah
+        else if (currentState == State.GAME_OVER) {
+            g.setColor(Color.RED); g.setFont(new Font("Monospaced", Font.BOLD, 40));
+            g.drawString("SYSTEM FAILURE", UI_W + 150, 200);
+            tampilkanOpsiMenu(g);
+        }
+        else if (currentState == State.WIN) {
+            g.setColor(Color.GREEN); g.setFont(new Font("Monospaced", Font.BOLD, 40));
+            g.drawString("MISSION ACCOMPLISHED", UI_W + 120, 200);
+            tampilkanOpsiMenu(g); // Panggil fungsi pembantu untuk menampilkan tombol
+        }
+
         if (flashAlpha > 0) { g.setColor(new Color(255, 0, 0, flashAlpha)); g.fillRect(0, 0, UI_W + GAME_W, H); }
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
         int key = e.getKeyCode();
-        if (currentState == State.EXPLORE) handleExplore(key);
+
+        // 7. Logika Tombol di Menu Utama
+        if (currentState == State.MENU) {
+            if (key == KeyEvent.VK_SPACE) {
+                resetGame(); // Mulai game dari awal
+            }
+        }
+        // 8. Logika Tombol saat Game Over ATAU Menang (Restart dan Back to Menu)
+        else if (currentState == State.GAME_OVER || currentState == State.WIN) {
+            if (key == KeyEvent.VK_R) {
+                resetGame();
+            } else if (key == KeyEvent.VK_M) {
+                currentState = State.MENU;
+            }
+        }
+        else if (currentState == State.EXPLORE) handleExplore(key);
         else if (currentState == State.COMBAT_INPUT) handleCombatInput(key);
         else if (currentState == State.COMBAT_RESULT && key == KeyEvent.VK_SPACE) {
-            // LOOP PERTARUNGAN: Jika musuh belum mati, kembali ke input serangan
-            if (activeEnemy.isDefeated || player.getHp() <= 0) {
-                currentState = State.EXPLORE;
+            if (activeEnemy.isDefeated) {
+                // Cek apakah musuh yang kalah adalah Boss
+                if (activeEnemy instanceof actors.roles.GangLeader) {
+                    currentState = State.WIN; // Jika boss kalah, langsung ke layar Menang
+                } else {
+                    currentState = State.EXPLORE; // Jika musuh biasa, kembali jalan-jalan
+                }
+            } else if (player.getHp() <= 0) {
+                currentState = State.GAME_OVER;
             } else {
                 combatTimer = player.maxCombatTime;
                 activeEnemy.generateIntent();
@@ -133,10 +197,7 @@ public class Game extends JPanel implements KeyListener, ActionListener {
             else if (gameMap.isInteractable(tx, ty, 5)) {
                 if (player.getExperience() >= 50) {
                     player.setExperience(player.getExperience() - 50);
-
-                    // BUKTI PENGGUNAAN levelUp()
                     player.levelUp();
-
                     player.maxCombatTime += 1.0;
                     SoundManager.play("win");
                     logMessage("UPGRADE! Anda naik ke Level " + player.getLevel());
@@ -151,8 +212,6 @@ public class Game extends JPanel implements KeyListener, ActionListener {
                     playerSelection = 0; combatTimer = player.maxCombatTime;
                     currentState = State.COMBAT_INPUT;
                     SoundManager.play("combat_start");
-
-                    // BUKTI PENGGUNAAN getGangFaction()
                     logMessage("Dihadang oleh faksi: " + activeEnemy.getGangFaction());
                 }
             }
@@ -176,17 +235,13 @@ public class Game extends JPanel implements KeyListener, ActionListener {
 
         } else if ((playerSelection == 0 && enemyAttack == 1) || (playerSelection == 1 && enemyAttack == 2) || (playerSelection == 2 && enemyAttack == 0)) {
             player.combo++;
-
-            // BUKTI PENGGUNAAN attack() PADA PLAYER
-            player.attack(); // Akan dieksekusi di background console
-
+            player.attack();
             int damageDealt = player.getBaseDamage() * clashMultiplier;
 
-            // BUKTI PENGGUNAAN getArmorPoint() dan isEnraged() PADA BOSS
             if (activeEnemy instanceof actors.roles.GangLeader) {
                 actors.roles.GangLeader boss = (actors.roles.GangLeader) activeEnemy;
                 if (boss.isEnraged()) {
-                    damageDealt -= (boss.getArmorPoint() / 10); // Armor mengurangi damage yang masuk
+                    damageDealt -= (boss.getArmorPoint() / 10);
                 }
             }
 
@@ -201,10 +256,9 @@ public class Game extends JPanel implements KeyListener, ActionListener {
             } else {
                 combatMessage = "Berhasil! Musuh tersisa " + activeEnemy.getHp() + " HP";
 
-                // BUKTI PENGGUNAAN specialSkill()
                 if (activeEnemy instanceof actors.roles.GangLeader) {
                     actors.roles.GangLeader boss = (actors.roles.GangLeader) activeEnemy;
-                    if (boss.getHp() <= 75 && !boss.isEnraged()) { // Jika darah boss <= 50%
+                    if (boss.getHp() <= 75 && !boss.isEnraged()) {
                         boss.specialSkill();
                         logMessage("BOSS MARAH! DMG x2 & Armor Aktif!");
                     }
@@ -215,14 +269,11 @@ public class Game extends JPanel implements KeyListener, ActionListener {
             clashMultiplier = 1; SoundManager.play("win");
 
         } else {
-            // BUKTI PENGGUNAAN attack() PADA MUSUH
             activeEnemy.attack();
-
             int damage = activeEnemy.getBaseDamage() * clashMultiplier;
 
-            // BUKTI PENGGUNAAN EFEK isEnraged() UNTUK SERANGAN
             if (activeEnemy instanceof actors.roles.GangLeader && ((actors.roles.GangLeader)activeEnemy).isEnraged()) {
-                damage *= 2; // Damage boss menjadi 2x lipat
+                damage *= 2;
             }
 
             combatMessage = "Gagal! Terkena serangan (-" + damage + " HP)";
@@ -235,4 +286,10 @@ public class Game extends JPanel implements KeyListener, ActionListener {
 
     @Override public void keyReleased(KeyEvent e) {}
     @Override public void keyTyped(KeyEvent e) {}
+    private void tampilkanOpsiMenu(Graphics g) {
+        g.setColor(Color.YELLOW);
+        g.setFont(new Font("Monospaced", Font.BOLD, 16));
+        g.drawString("[R] RESTART GAME", UI_W + 220, 250);
+        g.drawString("[M] MAIN MENU", UI_W + 235, 280);
+    }
 }
