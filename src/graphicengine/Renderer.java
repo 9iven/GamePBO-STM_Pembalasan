@@ -23,8 +23,20 @@ public class Renderer {
                 else if (grid[r][c] == 1) { g.setColor(new Color(75, 0, 130)); g.fillRect(px, py, ts, ts); g.setColor(Color.BLACK); g.drawRect(px, py, ts, ts); }
                 else if (grid[r][c] == 2) { g.setColor(new Color(150, 0, 0)); g.fillRect(px, py, ts, ts); g.setColor(Color.WHITE); g.drawString("OUT", px+15, py+30); }
                 else if (grid[r][c] == 3) { g.setColor(new Color(0, 255, 255)); g.fillRect(px, py, ts, ts); }
-                else if (grid[r][c] == 4) { g.setColor(new Color(50, 205, 50)); g.fillRect(px, py, ts, ts); g.setColor(Color.WHITE); g.drawString("K", px+20, py+30); }
-                else if (grid[r][c] == 5) { g.setColor(new Color(255, 165, 0)); g.fillRect(px, py, ts, ts); g.setColor(Color.WHITE); g.drawString("R", px+20, py+30); }
+                else if (grid[r][c] == 4) {
+                    g.setColor(new Color(50, 205, 50));
+                    g.fillRect(px, py, ts, ts);
+                    g.setColor(Color.WHITE);
+                    // Mengubah "K" jadi "Heal" dan menggeser px sedikit ke kiri (px+8) agar teksnya muat di dalam kotak
+                    g.drawString("Heal", px+8, py+30);
+                }
+                else if (grid[r][c] == 5) {
+                    g.setColor(new Color(255, 165, 0));
+                    g.fillRect(px, py, ts, ts);
+                    g.setColor(Color.WHITE);
+                    // Mengubah "R" jadi "UP" dan menggeser px sedikit agar letaknya pas di tengah
+                    g.drawString("UP", px+15, py+30);
+                }
             }
         }
 
