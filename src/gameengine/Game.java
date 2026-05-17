@@ -38,6 +38,9 @@ public class Game extends JPanel implements KeyListener, ActionListener {
         this.enemies = gameMap.getEnemiesForCurrentLevel();
         logMessage("Sistem Aktif. WASD: Bergerak, SPASI: Interaksi");
         gameLoop = new Timer(16, this);
+
+        // --- TAMBAHAN BARU: Memutar BGM "main_theme" ---
+        SoundManager.playBGM("main_theme");
     }
 
     public void startGameLoop() { gameLoop.start(); }
@@ -57,6 +60,9 @@ public class Game extends JPanel implements KeyListener, ActionListener {
         flashAlpha = 0;
         playerSelection = 0;
         currentState = State.EXPLORE;
+
+        // TAMBAHAN: Mainkan lagi musiknya saat game di-restart dari awal
+        SoundManager.playBGM("main_theme");
     }
 
     @Override
@@ -71,7 +77,13 @@ public class Game extends JPanel implements KeyListener, ActionListener {
                 flashAlpha = 200;
                 player.combo = 0;
                 clashMultiplier = 1;
-                currentState = player.getHp() <= 0 ? State.GAME_OVER : State.COMBAT_RESULT;
+                // --- TAMBAHAN BARU: Menghentikan BGM saat mati kehabisan waktu ---
+                if (player.getHp() <= 0) {
+                    currentState = State.GAME_OVER;
+                    SoundManager.stopBGM();
+                } else {
+                    currentState = State.COMBAT_RESULT;
+                }
             }
         }
         repaint();
@@ -134,6 +146,9 @@ public class Game extends JPanel implements KeyListener, ActionListener {
                 resetGame();
             } else if (key == KeyEvent.VK_M) {
                 currentState = State.MENU;
+
+                // TAMBAHAN: Mainkan lagi musiknya saat kembali ke Main Menu Utama
+                SoundManager.playBGM("main_theme");
             }
         }
         else if (currentState == State.EXPLORE) handleExplore(key);
@@ -279,7 +294,7 @@ public class Game extends JPanel implements KeyListener, ActionListener {
             combatMessage = "Gagal! Terkena serangan (-" + damage + " HP)";
             player.takeDamage(damage); player.combo = 0; clashMultiplier = 1; flashAlpha = 200;
             SoundManager.play("hit"); logMessage("HP Berkurang.");
-            if (player.getHp() <= 0) currentState = State.GAME_OVER;
+            if (player.getHp() <= 0) { currentState = State.GAME_OVER; SoundManager.stopBGM(); }
         }
         if (currentState != State.GAME_OVER) currentState = State.COMBAT_RESULT;
     }
