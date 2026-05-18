@@ -601,11 +601,7 @@ public class Game extends JPanel implements KeyListener, ActionListener {
 
     private void resolveCombat() {
 
-        String[] actions = {
-                "Fisik",
-                "Nasihat",
-                "Empati"
-        };
+        String[] actions = { "Pukulan", "Tendangan", "Tangkisan" };
 
         int enemyAttack = activeEnemy.currentIntent;
 

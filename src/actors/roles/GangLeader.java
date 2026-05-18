@@ -15,16 +15,21 @@ public class GangLeader extends Enemy {
     @Override
     public void generateIntent() {
         super.generateIntent();
-        if (currentIntent == 0) this.currentDialogue = "\"KEKUATAN FISIK ADALAH HUKUM MUTLAK DI SINI!\"";
-        else if (currentIntent == 1) this.currentDialogue = "\"Kau pikir ceramahmu bisa mengubah aturan sekolah ini?\"";
-        else this.currentDialogue = "\"Jangan bertingkah seolah kau peduli padaku!\"";
+
+        if (currentIntent == 0) {
+            this.currentDialogue = "\"Nyali lo gede juga berani sampai ke sini.\"";
+        } else if (currentIntent == 1) {
+            this.currentDialogue = "\"Kakak lo aja habis di tangan gue, apalagi lo!\"";
+        } else {
+            this.currentDialogue = "\"Lo pikir lo bisa keluar dari sini hidup-hidup?\"";
+        }
     }
 
-    // MENGGUNAKAN METHOD specialSkill():
     public void specialSkill() {
         this.isEnraged = true;
         System.out.println(getName() + " MENGAKTIFKAN MODE ENRAGED!");
     }
+
 
     // Getter untuk diakses oleh Game.java
     public boolean isEnraged() { return isEnraged; }

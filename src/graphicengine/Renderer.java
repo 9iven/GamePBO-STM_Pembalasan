@@ -95,15 +95,26 @@ public class Renderer {
         g.setFont(new Font("Monospaced", Font.ITALIC, 14));
         g.drawString(e.currentDialogue, ox, 90);
 
+        // --- AWAL PENAMBAHAN KODE TELEGRAPHING ---
+        g.setColor(new Color(255, 165, 0)); // Warna Oranye
+        g.setFont(new Font("Monospaced", Font.BOLD, 14));
+        String indikator = "";
+        if (e.currentIntent == 0) indikator = "[ INDIKATOR: Musuh mengepalkan tangan (Pukulan) ]";
+        else if (e.currentIntent == 1) indikator = "[ INDIKATOR: Musuh memundurkan kaki (Tendangan) ]";
+        else if (e.currentIntent == 2) indikator = "[ INDIKATOR: Musuh menyilangkan lengan (Tangkisan) ]";
+        g.drawString(indikator, ox, 120);
+        // --- AKHIR PENAMBAHAN KODE TELEGRAPHING ---
+
         if (timer > 0) {
             g.setColor(timer < 1.5 ? Color.RED : Color.WHITE);
             g.setFont(new Font("Monospaced", Font.BOLD, 20));
-            g.drawString(String.format("WAKTU: %.1f DETIK", timer), ox, 140);
+            // Posisi Y untuk waktu diturunkan sedikit agar tidak bertumpuk dengan indikator
+            g.drawString(String.format("WAKTU: %.1f DETIK", timer), ox, 160);
             g.setColor(COLOR_TEXT);
             g.setFont(new Font("Monospaced", Font.PLAIN, 16));
             g.drawString("Pilih respons Anda (A/D & SPASI):", ox, 220);
 
-            String[] opts = {"[0] Tindakan Fisik", "[1] Memberi Nasihat", "[2] Pendekatan Empati"};
+            String[] opts = {"[0] Pukulan", "[1] Tendangan", "[2] Tangkisan"};
             for (int i = 0; i < 3; i++) {
                 g.setColor(selection == i ? Color.YELLOW : COLOR_TEXT);
                 g.drawString((selection == i ? ">> " : "   ") + opts[i], ox + 30, 260 + (i * 30));

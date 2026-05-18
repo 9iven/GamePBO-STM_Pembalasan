@@ -15,9 +15,19 @@ public class Enemy extends Bully {
 
     // Method untuk mengacak tipe serangan musuh dan kalimat petunjuknya
     public void generateIntent() {
-        this.currentIntent = new Random().nextInt(3);
-        if (this.currentIntent == 0) this.currentDialogue = "\"Maju selangkah lagi dan saya akan MENGHAJAR Anda!\"";
-        else if (this.currentIntent == 1) this.currentDialogue = "\"DENGARKAN perkataan saya, Anda adalah siswa yang gagal!\"";
-        else this.currentDialogue = "\"Semua orang menjauhi saya, saya merasa sangat KESEPIAN...\"";
+        this.currentIntent = new java.util.Random().nextInt(3);
+
+        // currentIntent 0 = Musuh menggunakan Pukulan (Pemain harus memilih [2] Tangkisan)
+        if (this.currentIntent == 0) {
+            this.currentDialogue = "\"Maju sini lo, rasain tinju gue!\"";
+        }
+        // currentIntent 1 = Musuh menggunakan Tendangan (Pemain harus memilih [0] Pukulan)
+        else if (this.currentIntent == 1) {
+            this.currentDialogue = "\"Gue tendang muka lo sekarang!\"";
+        }
+        // currentIntent 2 = Musuh menggunakan Tangkisan (Pemain harus memilih [1] Tendangan)
+        else {
+            this.currentDialogue = "\"Coba aja serang gue kalau bisa tembus!\"";
+        }
     }
 }
