@@ -67,7 +67,9 @@ public class Renderer {
         g.drawString("HP    : " + player.getHp() + "/" + player.MAX_HP, 15, 45);
         g.drawString("KOIN  : " + player.currency + " | EXP: " + player.getExperience(), 15, 65);
 
-        g.drawString("[ LOG [Controls: WASD, Space - Interact]]", 15, 220);
+        g.drawString("[ WASD - Move ]", 15, 180);
+        g.drawString("[ Space - Interact ]", 15, 200);
+        g.drawString("[ LOG ]", 15, 220);
         g.setFont(new Font("Monospaced", Font.PLAIN, 12));
 
         // Logika untuk word wrapping (memecah string panjang agar tidak keluar batas panel)
