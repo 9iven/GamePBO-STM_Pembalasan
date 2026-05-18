@@ -6,10 +6,27 @@ import actors.roles.Enemy;
 import java.awt.*;
 import java.util.ArrayList;
 
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
+import java.io.IOException;
+
 // Class untuk mengurus semua proses rendering (penggambaran pixel) ke layar
 public class Renderer {
     private final Color COLOR_UI_LINE = new Color(100, 100, 255);
     private final Color COLOR_TEXT = new Color(200, 200, 255);
+    private BufferedImage imgDepan, imgBelakang, imgKanan, imgKiri;
+
+    public Renderer() {
+        try {
+            // Memuat gambar dari folder resources
+            imgDepan = ImageIO.read(getClass().getResourceAsStream("/assets/karakter/mc_depan.png"));
+            imgBelakang = ImageIO.read(getClass().getResourceAsStream("/assets/karakter/mc_belakang.png"));
+            imgKanan = ImageIO.read(getClass().getResourceAsStream("/assets/karakter/mc_samping_kanan.png"));
+            imgKiri = ImageIO.read(getClass().getResourceAsStream("/assets/karakter/mc_samping_kiri.png"));
+        } catch (IOException | NullPointerException e) {
+            System.out.println("Gagal memuat gambar karakter: " + e.getMessage());
+        }
+    }
 
     public void drawWorld(Graphics g, Map map, Player player, ArrayList<Enemy> enemies, int uiWidth) {
         int ox = uiWidth + 10, oy = 20, ts = map.TILE_SIZE;
@@ -47,9 +64,35 @@ public class Renderer {
         }
 
         // Menggambar posisi pemain
-        g.setColor(Color.WHITE);
+        // Menggambar posisi pemain
         int px = ox + player.x * ts, py = oy + player.y * ts;
-        g.fillRect(px + 8, py + 8, 32, 32);
+
+        // --- LOGIKA BARU UNTUK GAMBAR KARAKTER ---
+        BufferedImage currentSprite = imgDepan; // Set default menghadap depan
+
+        // Cek arah menggunakan variabel facingX dan facingY dari class Player
+        if (player.facingY == -1) {
+            currentSprite = imgBelakang;  // Bergerak ke atas
+        } else if (player.facingY == 1) {
+            currentSprite = imgDepan;     // Bergerak ke bawah
+        } else if (player.facingX == -1) {
+            currentSprite = imgKiri;      // Bergerak ke kiri
+        } else if (player.facingX == 1) {
+            currentSprite = imgKanan;     // Bergerak ke kanan
+        }
+
+        // Gambar sprite jika berhasil dimuat, jika gagal kembalikan ke bentuk kotak
+        if (currentSprite != null) {
+            // Menggambar gambar menyesuaikan posisi (px, py) dan ukurannya (ts)
+            g.drawImage(currentSprite, px, py, ts, ts, null);
+        } else {
+            // Kode asli Anda sebagai cadangan (fallback)
+            g.setColor(Color.WHITE);
+            g.fillRect(px + 8, py + 8, 32, 32);
+            g.setColor(Color.YELLOW);
+            g.drawLine(px + ts/2, py + ts/2, px + ts/2 + (player.facingX * 24), py + ts/2 + (player.facingY * 24));
+        }
+        // -----------------------------------------
 
         // Indikator arah hadap pemain
         g.setColor(Color.YELLOW);
