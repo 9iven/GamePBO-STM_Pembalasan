@@ -6,39 +6,68 @@ import actors.roles.Enemy;
 import java.awt.*;
 import java.util.ArrayList;
 
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
+import java.io.IOException;
+
 // Class untuk mengurus semua proses rendering (penggambaran pixel) ke layar
 public class Renderer {
     private final Color COLOR_UI_LINE = new Color(100, 100, 255);
     private final Color COLOR_TEXT = new Color(200, 200, 255);
+    private BufferedImage imgDepan, imgBelakang, imgKanan, imgKiri;
+    private BufferedImage imgRumput, imgKelasLantai;
+
+    public Renderer() {
+        try {
+            // Memuat gambar dari folder resources
+            imgDepan = ImageIO.read(getClass().getResourceAsStream("/assets/karakter/mc_depan.png"));
+            imgBelakang = ImageIO.read(getClass().getResourceAsStream("/assets/karakter/mc_belakang.png"));
+            imgKanan = ImageIO.read(getClass().getResourceAsStream("/assets/karakter/mc_samping_kanan.png"));
+            imgKiri = ImageIO.read(getClass().getResourceAsStream("/assets/karakter/mc_samping_kiri.png"));
+            imgRumput = ImageIO.read(getClass().getResourceAsStream("/assets/lantai/rumput.png"));
+            imgKelasLantai = ImageIO.read(getClass().getResourceAsStream("/assets/lantai/kelas_lantai.png"));
+        } catch (IOException | NullPointerException e) {
+            System.out.println("Gagal memuat gambar karakter: " + e.getMessage());
+        }
+    }
 
     public void drawWorld(Graphics g, Map map, Player player, ArrayList<Enemy> enemies, int uiWidth) {
         int ox = uiWidth + 10, oy = 20, ts = map.TILE_SIZE;
         int[][] grid = map.getCurrentMap();
 
         // Melakukan iterasi array 2D untuk menggambar lingkungan
+        // Melakukan iterasi array 2D untuk menggambar lingkungan
         for (int r = 0; r < grid.length; r++) {
             for (int c = 0; c < grid[0].length; c++) {
                 int px = ox + (c * ts), py = oy + (r * ts);
-                if (grid[r][c] == 0) { g.setColor(new Color(20, 20, 30)); g.fillRect(px, py, ts, ts); }
+
+                if (grid[r][c] == 0) {
+                    // === LOGIKA GAMBAR LANTAI ===
+                    // Level 0 dan 1 menggunakan gambar rumput
+                    if (map.currentLevel == 0) {
+                        if (imgRumput != null) {
+                            g.drawImage(imgRumput, px, py, ts, ts, null);
+                        } else {
+                            g.setColor(new Color(20, 20, 30));
+                            g.fillRect(px, py, ts, ts);
+                        }
+                    }
+                    // Level 2 dan seterusnya menggunakan lantai kelas
+                    else {
+                        if (imgKelasLantai != null) {
+                            g.drawImage(imgKelasLantai, px, py, ts, ts, null);
+                        } else {
+                            g.setColor(new Color(20, 20, 30));
+                            g.fillRect(px, py, ts, ts);
+                        }
+                    }
+                    // ==============================
+                }
                 else if (grid[r][c] == 1) { g.setColor(new Color(75, 0, 130)); g.fillRect(px, py, ts, ts); g.setColor(Color.BLACK); g.drawRect(px, py, ts, ts); }
-                else if (grid[r][c] == 2) { g.setColor(new Color(150, 0, 0)); g.fillRect(px, py, ts, ts); g.setColor(Color.WHITE); g.drawString("OUT", px+15, py+30); }
-                else if (grid[r][c] == 3) { g.setColor(new Color(0, 255, 255)); g.fillRect(px, py, ts, ts); }
-                else if (grid[r][c] == 4) {
-                    g.setColor(new Color(50, 205, 50));
-                    g.fillRect(px, py, ts, ts);
-                    g.setColor(Color.WHITE);
-                    // Mengubah "K" jadi "Heal" dan menggeser px sedikit ke kiri (px+8) agar teksnya muat di dalam kotak
-                    g.drawString("Heal", px+8, py+30);
-                }
-                else if (grid[r][c] == 5) {
-                    g.setColor(new Color(255, 165, 0));
-                    g.fillRect(px, py, ts, ts);
-                    g.setColor(Color.WHITE);
-                    // Mengubah "R" jadi "UP" dan menggeser px sedikit agar letaknya pas di tengah
-                    g.drawString("UP", px+15, py+30);
-                }
+                else if (grid[r][c] == 2) { g.setColor(new Color(150, 0, 0)); g.fillRect(px, py, ts, ts); g.setColor(Color.WHITE); g.drawString("OUT", px+15, py+30);}
             }
         }
+
 
         // Menggambar entitas musuh
         g.setColor(new Color(255, 105, 180));
@@ -47,9 +76,35 @@ public class Renderer {
         }
 
         // Menggambar posisi pemain
-        g.setColor(Color.WHITE);
+        // Menggambar posisi pemain
         int px = ox + player.x * ts, py = oy + player.y * ts;
-        g.fillRect(px + 8, py + 8, 32, 32);
+
+        // --- LOGIKA BARU UNTUK GAMBAR KARAKTER ---
+        BufferedImage currentSprite = imgDepan; // Set default menghadap depan
+
+        // Cek arah menggunakan variabel facingX dan facingY dari class Player
+        if (player.facingY == -1) {
+            currentSprite = imgBelakang;  // Bergerak ke atas
+        } else if (player.facingY == 1) {
+            currentSprite = imgDepan;     // Bergerak ke bawah
+        } else if (player.facingX == -1) {
+            currentSprite = imgKiri;      // Bergerak ke kiri
+        } else if (player.facingX == 1) {
+            currentSprite = imgKanan;     // Bergerak ke kanan
+        }
+
+        // Gambar sprite jika berhasil dimuat, jika gagal kembalikan ke bentuk kotak
+        if (currentSprite != null) {
+            // Menggambar gambar menyesuaikan posisi (px, py) dan ukurannya (ts)
+            g.drawImage(currentSprite, px, py, ts, ts, null);
+        } else {
+            // Kode asli Anda sebagai cadangan (fallback)
+            g.setColor(Color.WHITE);
+            g.fillRect(px + 8, py + 8, 32, 32);
+            g.setColor(Color.YELLOW);
+            g.drawLine(px + ts/2, py + ts/2, px + ts/2 + (player.facingX * 24), py + ts/2 + (player.facingY * 24));
+        }
+        // -----------------------------------------
 
         // Indikator arah hadap pemain
         g.setColor(Color.YELLOW);
