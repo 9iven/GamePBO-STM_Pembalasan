@@ -11,9 +11,9 @@ public class SoundManager {
     public static void play(String soundName) {
         System.out.println("[AUDIO SFX] Memainkan: " + soundName);
         try {
-            File soundFile = new File("sounds/" + soundName + ".wav");
+            File soundFile = new File("src/assets/audio/" + soundName + ".wav");
 
-            // putar file wife
+            // putar file wav
             if (soundFile.exists()) {
                 AudioInputStream audioIn = AudioSystem.getAudioInputStream(soundFile);
                 Clip clip = AudioSystem.getClip();
@@ -34,7 +34,7 @@ public class SoundManager {
 
             stopBGM();
 
-            File soundFile = new File("sounds/" + bgmName + ".wav");
+            File soundFile = new File("src/assets/audio/" + bgmName + ".wav");
             if (soundFile.exists()) {
                 AudioInputStream audioIn = AudioSystem.getAudioInputStream(soundFile);
                 bgmClip = AudioSystem.getClip();
