@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 public class Game extends JPanel implements KeyListener, ActionListener {
 
-    private final int UI_W = 280, GAME_W = 720, H = 450;
+    private final int UI_W = 280, GAME_W = 720, H = 480;
 
     private Map gameMap = new Map();
     private Player player = new Player();
@@ -156,7 +156,7 @@ public class Game extends JPanel implements KeyListener, ActionListener {
             g.setColor(Color.WHITE);
 
             g.setFont(new Font("Monospaced", Font.BOLD, 40));
-            g.drawString("DISCIPLINARY", UI_W + 100, 180);
+            g.drawString("STM Pembalasan", UI_W + 60, 180);
 
             g.setFont(new Font("Monospaced", Font.PLAIN, 20));
 

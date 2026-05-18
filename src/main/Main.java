@@ -8,7 +8,7 @@ public class Main {
 
     public static void main(String[] args) {
 
-        JFrame window = new JFrame("Disciplinary - Proyek Akhir PBO");
+        JFrame window = new JFrame("STM Pembalasan - Proyek Akhir PBO");
 
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setResizable(false);
