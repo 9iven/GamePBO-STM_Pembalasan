@@ -510,6 +510,35 @@ public class Game extends JPanel implements KeyListener, ActionListener {
                 }
             }
 
+            // ===== KANTIN (HEAL) =====
+            else if (gameMap.isInteractable(tx, ty, 4)) {
+                if (player.currency >= 10 && player.getHp() < player.MAX_HP) {
+                    player.currency -= 10;
+                    player.setHp(player.MAX_HP);
+                    SoundManager.play("win");
+                    logMessage("Heal penuh (-10 Koin)");
+                } else if (player.getHp() >= player.MAX_HP) {
+                    logMessage("Darah sudah penuh.");
+                } else {
+                    SoundManager.play("error");
+                    logMessage("Butuh 10 Koin.");
+                }
+            }
+            // ===== RUANG GURU (LEVEL UP) =====
+            else if (gameMap.isInteractable(tx, ty, 5)) {
+                if (player.getExperience() >= 50) {
+                    player.setExperience(player.getExperience() - 50);
+                    player.levelUp(); // Pemanggilan method levelUp()
+                    player.maxCombatTime += 1.0;
+                    SoundManager.play("win");
+                    logMessage("UPGRADE! Level " + player.getLevel());
+                } else {
+                    SoundManager.play("error");
+                    logMessage("Butuh 50 EXP.");
+                }
+            }
+            // ==========================================
+
             // ===== MUSUH =====
             for (Enemy enemy : enemies) {
 
