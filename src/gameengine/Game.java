@@ -66,7 +66,7 @@ public class Game extends JPanel implements KeyListener, ActionListener {
 
         gameLoop = new Timer(16, this);
 
-        SoundManager.playBGM("main_theme");
+        SoundManager.playBGM("main_theme"); //Musik Menyala Saat Game Pertama Dibuka
     }
 
     public void startGameLoop() {
@@ -98,7 +98,7 @@ public class Game extends JPanel implements KeyListener, ActionListener {
 
         logMessage("Masuk ke sekolah...");
 
-        SoundManager.playBGM("main_theme");
+        SoundManager.playBGM("main_theme"); //Musik Menyala Lagi Saat Restart
     }
 
     @Override
@@ -124,7 +124,7 @@ public class Game extends JPanel implements KeyListener, ActionListener {
                 if (player.getHp() <= 0) {
 
                     currentState = State.GAME_OVER;
-                    SoundManager.stopBGM();
+                    SoundManager.stopBGM(); // Musik Mati Saat Kalah (Kehabisan Waktu)
 
                 } else {
 
@@ -366,7 +366,7 @@ public class Game extends JPanel implements KeyListener, ActionListener {
 
                 currentState = State.MENU;
 
-                SoundManager.playBGM("main_theme");
+                SoundManager.playBGM("main_theme"); //Musik Otomatis Berbunyi Lagi Saat Restart (Tombol R)
             }
         }
 
@@ -689,7 +689,7 @@ public class Game extends JPanel implements KeyListener, ActionListener {
 
                 currentState = State.GAME_OVER;
 
-                SoundManager.stopBGM();
+                SoundManager.stopBGM(); // Musik Mati Saat Kalah (Kena Serangan Musuh)
             }
         }
 
