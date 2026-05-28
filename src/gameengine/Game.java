@@ -152,145 +152,95 @@ public class Game extends JPanel implements KeyListener, ActionListener {
 
         // ===== MENU =====
         if (currentState == State.MENU) {
-
             g.setColor(Color.WHITE);
-
-            g.setFont(new Font("Monospaced", Font.BOLD, 40));
-            g.drawString("STM Pembalasan", UI_W + 60, 180);
-
-            g.setFont(new Font("Monospaced", Font.PLAIN, 20));
+            drawCenteredString(g, "STM Pembalasan", H / 2 - 40, new Font("Monospaced", Font.BOLD, 40), 0, getWidth());
 
             g.setColor(Color.YELLOW);
-            g.drawString("Tekan [SPASI] untuk Mulai", UI_W + 80, 260);
-
+            drawCenteredString(g, "Tekan [SPASI] untuk Mulai", H / 2 + 30, new Font("Monospaced", Font.PLAIN, 20), 0, getWidth());
             return;
         }
 
         // ===== INTRO =====
         else if (currentState == State.INTRO) {
-
             g.setColor(Color.WHITE);
+            Font introFont = new Font("Monospaced", Font.BOLD, 22);
 
-            g.setFont(new Font("Monospaced", Font.BOLD, 22));
-
+            String teksIntro = "";
             if (introStep == 0) {
-
-                g.drawString("Kakakku hanya ingin menjalani hari-harinya dengan damai...", 180, 180);
+                teksIntro = "Kakakku hanya ingin menjalani hari-harinya dengan damai...";
+            } else if (introStep == 1) {
+                teksIntro = "Tapi mereka mengambil semuanya darinya.";
+            } else if (introStep == 2) {
+                teksIntro = "Maka aku sendiri yang akan menjemputnya.";
             }
 
-            else if (introStep == 1) {
-
-                g.drawString("Tapi mereka mengambil semuanya darinya.", 170, 180);
-            }
-
-            else if (introStep == 2) {
-
-                g.drawString("Maka aku sendiri yang akan menjemputnya.", 120, 180);
-            }
+            drawCenteredString(g, teksIntro, H / 2 - 20, introFont, 0, getWidth());
 
             g.setColor(Color.YELLOW);
-
-            g.setFont(new Font("Monospaced", Font.PLAIN, 16));
-            g.drawString("Tekan SPASI...", 300, 300);
-
+            Font promptFont = new Font("Monospaced", Font.PLAIN, 16);
+            drawCenteredString(g, "Tekan SPASI...", H / 2 + 50, promptFont, 0, getWidth());
             return;
         }
 
-        renderer.drawUI(
-                g,
-                player,
-                gameMap.currentLevel + 1,
-                logMessages,
-                UI_W,
-                H
-        );
+        // Komponen UI akan dirender untuk state selain Menu dan Intro
+        renderer.drawUI(g, player, gameMap.currentLevel + 1, logMessages, UI_W, H);
 
         // ===== EXPLORE =====
         if (currentState == State.EXPLORE) {
-
-            renderer.drawWorld(
-                    g,
-                    gameMap,
-                    player,
-                    enemies,
-                    UI_W
-            );
+            renderer.drawWorld(g, gameMap, player, enemies, UI_W);
         }
 
         // ===== PUZZLE =====
         else if (currentState == State.PUZZLE) {
-
             g.setColor(Color.WHITE);
+            drawCenteredString(g, "TEKA - TEKI", 100, new Font("Monospaced", Font.BOLD, 26), UI_W, GAME_W);
 
-            g.setFont(new Font("Monospaced", Font.BOLD, 26));
-            g.drawString("TEKA - TEKI", UI_W + 180, 100);
-
-            g.setFont(new Font("Monospaced", Font.PLAIN, 18));
-
-            g.drawString("Aku punya banyak gigi,", UI_W + 100, 180);
-            g.drawString("tapi tidak bisa menggigit.", UI_W + 100, 210);
-            g.drawString("Apakah aku?", UI_W + 100, 260);
+            Font fontPertanyaan = new Font("Monospaced", Font.PLAIN, 18);
+            drawCenteredString(g, "Aku punya banyak gigi,", 180, fontPertanyaan, UI_W, GAME_W);
+            drawCenteredString(g, "tapi tidak bisa menggigit.", 210, fontPertanyaan, UI_W, GAME_W);
+            drawCenteredString(g, "Apakah aku?", 260, fontPertanyaan, UI_W, GAME_W);
 
             g.setColor(Color.YELLOW);
-
-            g.drawString("[1] Sisir", UI_W + 120, 330);
-            g.drawString("[2] Batu", UI_W + 120, 360);
-            g.drawString("[3] Meja", UI_W + 120, 390);
+            drawCenteredString(g, "[1] Sisir", 330, fontPertanyaan, UI_W, GAME_W);
+            drawCenteredString(g, "[2] Batu", 360, fontPertanyaan, UI_W, GAME_W);
+            drawCenteredString(g, "[3] Meja", 390, fontPertanyaan, UI_W, GAME_W);
         }
 
         // ===== COMBAT =====
         else if (currentState == State.COMBAT_INPUT) {
-
-            renderer.drawCombat(
-                    g,
-                    activeEnemy,
-                    combatTimer,
-                    clashMultiplier,
-                    playerSelection,
-                    "",
-                    UI_W
-            );
+            // Perhatikan penambahan argumen "player," setelah "g,"
+            renderer.drawCombat(g, player, activeEnemy, combatTimer, clashMultiplier, playerSelection, "", UI_W);
         }
-
         else if (currentState == State.COMBAT_RESULT) {
-
-            renderer.drawCombat(
-                    g,
-                    activeEnemy,
-                    0,
-                    clashMultiplier,
-                    playerSelection,
-                    combatMessage,
-                    UI_W
-            );
+            // Perhatikan penambahan argumen "player," setelah "g,"
+            renderer.drawCombat(g, player, activeEnemy, 0, clashMultiplier, playerSelection, combatMessage, UI_W);
         }
 
         // ===== GAME OVER =====
         else if (currentState == State.GAME_OVER) {
-
             g.setColor(Color.RED);
-
-            g.setFont(new Font("Monospaced", Font.BOLD, 40));
-            g.drawString("SYSTEM FAILURE", UI_W + 120, 200);
-
+            // Dirender menggunakan getWidth() agar center di layar penuh
+            drawCenteredString(g, "SYSTEM FAILURE", H / 2 - 40, new Font("Monospaced", Font.BOLD, 40), 0, getWidth());
             tampilkanOpsiMenu(g);
         }
 
-        // ===== WIN =====
+        // ===== WIN / ENDING =====
         else if (currentState == State.WIN) {
-
             g.setColor(Color.GREEN);
+            drawCenteredString(g, "BALAS DENDAM SELESAI", H / 2 - 90, new Font("Monospaced", Font.BOLD, 36), 0, getWidth());
 
-            g.setFont(new Font("Monospaced", Font.BOLD, 40));
-            g.drawString("MISSION ACCOMPLISHED", UI_W + 70, 200);
+            // Teks Cerita Penutup
+            g.setColor(Color.WHITE);
+            Font endingFont = new Font("Monospaced", Font.PLAIN, 18);
+            drawCenteredString(g, "Pimpinan mereka akhirnya tersungkur di hadapanku.", H / 2 - 30, endingFont, 0, getWidth());
+            drawCenteredString(g, "Rasa sakit yang ditanggung kakakku kini telah terbayar lunas.", H / 2, endingFont, 0, getWidth());
+            drawCenteredString(g, "Tidak akan ada lagi yang berani mengusik kami.", H / 2 + 30, endingFont, 0, getWidth());
 
             tampilkanOpsiMenu(g);
         }
 
         if (flashAlpha > 0) {
-
             g.setColor(new Color(255, 0, 0, flashAlpha));
-
             g.fillRect(0, 0, UI_W + GAME_W, H);
         }
     }
@@ -706,12 +656,19 @@ public class Game extends JPanel implements KeyListener, ActionListener {
     public void keyTyped(KeyEvent e) {}
 
     private void tampilkanOpsiMenu(Graphics g) {
-
         g.setColor(Color.YELLOW);
+        Font fontOpsi = new Font("Monospaced", Font.BOLD, 16);
 
-        g.setFont(new Font("Monospaced", Font.BOLD, 16));
+        // Opsi Restart dan Menu ditarik lebih ke bawah (H / 2 + 100) dan di-center di layar penuh (0, getWidth())
+        drawCenteredString(g, "[R] Restart", H / 2 + 100, fontOpsi, 0, getWidth());
+        drawCenteredString(g, "[M] Main Menu", H / 2 + 130, fontOpsi, 0, getWidth());
+    }
 
-        g.drawString("[R] Restart", UI_W + 240, 260);
-        g.drawString("[M] Main Menu", UI_W + 220, 290);
+    // Method Helper Baru untuk Komputasi Titik Tengah String
+    private void drawCenteredString(Graphics g, String text, int y, Font font, int startX, int areaWidth) {
+        g.setFont(font);
+        FontMetrics fm = g.getFontMetrics();
+        int x = startX + (areaWidth - fm.stringWidth(text)) / 2;
+        g.drawString(text, x, y);
     }
 }
