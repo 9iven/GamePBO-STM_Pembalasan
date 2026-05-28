@@ -85,8 +85,6 @@ public class Map {
 
         // LEVEL 0
         allLevelEnemies.get(0).add(new Enemy(6, 2));
-        allLevelEnemies.get(0).add(new Enemy(7, 2));
-
         // Menggunakan constructor overloading: Enemy(String, int, int) -> Nama kustom
         allLevelEnemies.get(0).add(new Enemy("Penjaga Gerbang", 7, 2));
 
