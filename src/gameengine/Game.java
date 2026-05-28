@@ -44,10 +44,6 @@ public class Game extends JPanel implements KeyListener, ActionListener {
     private ArrayList<String> logMessages = new ArrayList<>();
     private String combatMessage = "";
 
-    // ===== PUZZLE =====
-    private boolean puzzleSolved = false;
-    private boolean hasPipe = false;
-
     // ===== INTRO =====
     private int introStep = 0;
 
@@ -88,9 +84,6 @@ public class Game extends JPanel implements KeyListener, ActionListener {
         clashMultiplier = 1;
         flashAlpha = 0;
         playerSelection = 0;
-
-        puzzleSolved = false;
-        hasPipe = false;
 
         introStep = 0;
 
@@ -190,22 +183,6 @@ public class Game extends JPanel implements KeyListener, ActionListener {
             renderer.drawWorld(g, gameMap, player, enemies, UI_W);
         }
 
-        // ===== PUZZLE =====
-        else if (currentState == State.PUZZLE) {
-            g.setColor(Color.WHITE);
-            drawCenteredString(g, "TEKA - TEKI", 100, new Font("Monospaced", Font.BOLD, 26), UI_W, GAME_W);
-
-            Font fontPertanyaan = new Font("Monospaced", Font.PLAIN, 18);
-            drawCenteredString(g, "Aku punya banyak gigi,", 180, fontPertanyaan, UI_W, GAME_W);
-            drawCenteredString(g, "tapi tidak bisa menggigit.", 210, fontPertanyaan, UI_W, GAME_W);
-            drawCenteredString(g, "Apakah aku?", 260, fontPertanyaan, UI_W, GAME_W);
-
-            g.setColor(Color.YELLOW);
-            drawCenteredString(g, "[1] Sisir", 330, fontPertanyaan, UI_W, GAME_W);
-            drawCenteredString(g, "[2] Batu", 360, fontPertanyaan, UI_W, GAME_W);
-            drawCenteredString(g, "[3] Meja", 390, fontPertanyaan, UI_W, GAME_W);
-        }
-
         // ===== COMBAT =====
         else if (currentState == State.COMBAT_INPUT) {
             // Perhatikan penambahan argumen "player," setelah "g,"
@@ -227,14 +204,14 @@ public class Game extends JPanel implements KeyListener, ActionListener {
         // ===== WIN / ENDING =====
         else if (currentState == State.WIN) {
             g.setColor(Color.GREEN);
-            drawCenteredString(g, "BALAS DENDAM SELESAI", H / 2 - 90, new Font("Monospaced", Font.BOLD, 36), 0, getWidth());
+            drawCenteredString(g, "BALAS DENDAM SELESAI", H / 2 - 90, new Font("Monospaced", Font.BOLD, 36), 0, getWidth() + 30);
 
             // Teks Cerita Penutup
             g.setColor(Color.WHITE);
             Font endingFont = new Font("Monospaced", Font.PLAIN, 18);
-            drawCenteredString(g, "Pimpinan mereka akhirnya tersungkur di hadapanku.", H / 2 - 30, endingFont, 0, getWidth());
-            drawCenteredString(g, "Rasa sakit yang ditanggung kakakku kini telah terbayar lunas.", H / 2, endingFont, 0, getWidth());
-            drawCenteredString(g, "Tidak akan ada lagi yang berani mengusik kami.", H / 2 + 30, endingFont, 0, getWidth());
+            drawCenteredString(g, "Pimpinan mereka akhirnya tersungkur di hadapanku.", H / 2 - 30, endingFont, 0, getWidth() + 30);
+            drawCenteredString(g, "Rasa sakit yang ditanggung kakakku kini telah terbayar lunas.", H / 2, endingFont, 0, getWidth() + 30);
+            drawCenteredString(g, "Tidak akan ada lagi yang berani mengusik kami.", H / 2 + 30, endingFont, 0, getWidth() + 30);
 
             tampilkanOpsiMenu(g);
         }
@@ -270,34 +247,6 @@ public class Game extends JPanel implements KeyListener, ActionListener {
 
                     currentState = State.EXPLORE;
                 }
-            }
-        }
-
-        // ===== PUZZLE =====
-        else if (currentState == State.PUZZLE) {
-
-            if (key == KeyEvent.VK_1) {
-
-                puzzleSolved = true;
-                hasPipe = true;
-
-                player.setBaseDamage(
-                        player.getBaseDamage() + 15
-                );
-
-                logMessage("Mendapatkan Pipa Besi! DMG +15");
-
-                SoundManager.play("win");
-
-                currentState = State.EXPLORE;
-            }
-
-            else if (
-                    key == KeyEvent.VK_2 ||
-                            key == KeyEvent.VK_3
-            ) {
-
-                SoundManager.play("error");
             }
         }
 
@@ -414,17 +363,8 @@ public class Game extends JPanel implements KeyListener, ActionListener {
             int tx = player.x + player.facingX;
             int ty = player.y + player.facingY;
 
-            // ===== PUZZLE =====
-            if (
-                    gameMap.isPuzzleTile(tx, ty) &&
-                            !puzzleSolved
-            ) {
-
-                currentState = State.PUZZLE;
-            }
-
             // ===== PINDAH LANTAI =====
-            else if (gameMap.isInteractable(tx, ty, 3)) {
+            if (gameMap.isInteractable(tx, ty, 3)) {
 
                 SoundManager.play("door");
 

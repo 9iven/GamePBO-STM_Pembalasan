@@ -196,39 +196,26 @@ public class Renderer {
         g.drawString(e.currentDialogue, ox, 90);
 
 // --- KODE TELEGRAPHING (INDIKATOR GERAKAN) ---
-        // Menggunakan seed statis agar hasil random konsisten per ronde dan tidak berkedip (flicker)
-        java.util.Random rand = new java.util.Random(e.getHp() * 31L + e.currentIntent);
-
-        boolean isBoss = e instanceof actors.roles.GangLeader;
-
-        // Komputasi Probabilitas (Chance)
-        // Boss: 2/3 (Jika hasil random 0 atau 1 dari rentang 0-2)
-        // Kroco: 1/3 (Jika hasil random 0 dari rentang 0-2)
-        boolean isUnknown = isBoss ? (rand.nextInt(3) < 2) : (rand.nextInt(3) < 1);
-
+        // Memanfaatkan operasi modulo pada HP untuk menentukan peluang 50:50 tanpa objek random atau seed
         String indikator = "";
+        Color indicatorColor = new Color(255, 165, 0);
 
-        if (isUnknown) {
-            // Probabilitas 1/2 (50%) untuk status parsial (hanya dialog yang memandu)
-            boolean isPartial = rand.nextBoolean();
-
-            if (isPartial) {
-                g.setColor(new Color(255, 215, 0)); // Warna emas muda
-                indikator = "[ INDIKATOR: (???) Perhatikan intonasi dialog musuh! ]";
-            } else {
-                g.setColor(new Color(255, 50, 50)); // Warna merah peringatan
-                indikator = "[ INDIKATOR: (UNKNOWN) Pergerakan sepenuhnya tidak terbaca! ]";
-            }
+        if (e.getHp() % 2 == 0) {
+            // [Probabilitas 50%] Kategori 1: ??? CEK DIALOG
+            indicatorColor = new Color(255, 215, 0); // Warna emas muda
+            indikator = "[ INDIKATOR: (???) CEK DIALOG ]";
         } else {
-            // Status Normal (Indikator terlihat jelas)
-            g.setColor(new Color(255, 165, 0)); // Warna oranye
-            if (e.currentIntent == 0) indikator = "[ INDIKATOR: Musuh mengepalkan tangan (Pukulan) ]";
-            else if (e.currentIntent == 1) indikator = "[ INDIKATOR: Musuh memundurkan kaki (Tendangan) ]";
-            else if (e.currentIntent == 2) indikator = "[ INDIKATOR: Musuh menyilangkan lengan (Tangkisan) ]";
+            // [Probabilitas 50%] Kategori 2: Berindikator Nyata (Normal)
+            indicatorColor = new Color(255, 140, 0); // Warna oranye utama tema
+            if (e.currentIntent == 0) indikator = "[ INDIKATOR: PUKULAN ]";
+            else if (e.currentIntent == 1) indikator = "[ INDIKATOR: TENDANGAN ]";
+            else if (e.currentIntent == 2) indikator = "[ INDIKATOR: TANGKISAN ]";
         }
 
+        g.setColor(indicatorColor);
         g.setFont(new Font("Monospaced", Font.BOLD, 14));
         g.drawString(indikator, ox, 120);
+        // =====================================================
 
         if (timer > 0) {
             g.setColor(timer < 1.5 ? Color.RED : Color.WHITE);

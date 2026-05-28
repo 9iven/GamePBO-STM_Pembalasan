@@ -5,13 +5,12 @@ public class Player extends TransferStudent {
     // Hapus kata 'final' agar batas maksimal HP bisa bertambah saat Level Up
     public int MAX_HP = 100;
     public int facingX = 0, facingY = 1;
-    public int combo = 0;
 
     public int currency = 0;
     public double maxCombatTime = 4.0;
 
     public Player() {
-        super("Siswa Pindahan", 100, 15, 100);
+        super("Siswa Pindahan", 100, 15);
     }
 
     // MENGGUNAKAN METHOD levelUp():

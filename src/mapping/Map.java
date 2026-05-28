@@ -27,8 +27,8 @@ public class Map {
                     {1,1,1,1,1,1,3,3,1,1,1,1,1,1,1},
                     {1,0,0,0,1,1,0,0,1,1,0,0,0,0,1},
 
-                    // 4 = Puzzle Room
-                    // 5 = Kantin
+                    // 4 = Heal
+                    // 5 = Upgrade
                     {1,0,4,0,1,1,0,0,1,1,0,5,0,0,1},
 
                     {1,1,0,1,1,1,0,0,1,1,1,0,1,1,1},
@@ -141,23 +141,6 @@ public class Map {
         }
 
         return map[y][x] == type;
-    }
-
-    // ===== PUZZLE TILE =====
-    public boolean isPuzzleTile(int x, int y) {
-
-        int[][] map = levels[currentLevel];
-
-        if (
-                x < 0 ||
-                        x >= map[0].length ||
-                        y < 0 ||
-                        y >= map.length
-        ) {
-            return false;
-        }
-
-        return map[y][x] == 4;
     }
 
     // ===== ENEMY =====
