@@ -87,15 +87,21 @@ public class Map {
         allLevelEnemies.get(0).add(new Enemy(6, 2));
         allLevelEnemies.get(0).add(new Enemy(7, 2));
 
-        // LEVEL 1
-        allLevelEnemies.get(1).add(new Enemy(6, 1));
-        allLevelEnemies.get(1).add(new Enemy(7, 1));
-        allLevelEnemies.get(1).add(new Enemy(11, 3));
+        // Menggunakan constructor overloading: Enemy(String, int, int) -> Nama kustom
+        allLevelEnemies.get(0).add(new Enemy("Penjaga Gerbang", 7, 2));
+
+        // LEVEL 1 (Area Kantin dan Ruang Guru)
+        // Menggunakan constructor overloading untuk variasi nama musuh
+        allLevelEnemies.get(1).add(new Enemy("Preman Kantin", 6, 1));
+        allLevelEnemies.get(1).add(new Enemy("Preman Kantin", 7, 1));
+        allLevelEnemies.get(1).add(new Enemy("Penjaga Tangga", 11, 3));
+
+        // Menggunakan constructor asli
         allLevelEnemies.get(1).add(new Enemy(2, 3));
 
         // LEVEL 2
-        allLevelEnemies.get(2).add(new Enemy(2, 2));
-        allLevelEnemies.get(2).add(new Enemy(11, 2));
+        allLevelEnemies.get(2).add(new Enemy("Senior Lorong", 2, 2));
+        allLevelEnemies.get(2).add(new Enemy("Penjaga Tangga", 11, 2));
 
         // LEVEL 3
         allLevelEnemies.get(3).add(new GangLeader(7, 1));

@@ -1,5 +1,4 @@
 package actors.roles;
-import java.util.Random;
 
 public class Enemy extends Bully {
     public int x, y;
@@ -7,8 +6,17 @@ public class Enemy extends Bully {
     public int currentIntent;
     public String currentDialogue;
 
+    // 1. Constructor asli (hanya meminta x dan y, nama di-set default)
     public Enemy(int startX, int startY) {
         super("Perundung Kelas", 50, 10, 25, "Geng Lorong");
+        this.x = startX;
+        this.y = startY;
+    }
+
+    // 2. IMPLEMENTASI CONSTRUCTOR OVERLOADING
+    // Namanya sama-sama "Enemy", tetapi meminta tambahan parameter "customName"
+    public Enemy(String customName, int startX, int startY) {
+        super(customName, 50, 10, 25, "Geng Lorong");
         this.x = startX;
         this.y = startY;
     }
