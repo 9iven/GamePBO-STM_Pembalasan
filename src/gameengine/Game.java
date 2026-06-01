@@ -197,7 +197,7 @@ public class Game extends JPanel implements KeyListener, ActionListener {
         else if (currentState == State.GAME_OVER) {
             g.setColor(Color.RED);
             // Dirender menggunakan getWidth() agar center di layar penuh
-            drawCenteredString(g, "SYSTEM FAILURE", H / 2 - 40, new Font("Monospaced", Font.BOLD, 40), 0, getWidth());
+            drawCenteredString(g, "Anda Kalah!", H / 2 - 40, new Font("Monospaced", Font.BOLD, 40), 0, getWidth());
             tampilkanOpsiMenu(g);
         }
 
