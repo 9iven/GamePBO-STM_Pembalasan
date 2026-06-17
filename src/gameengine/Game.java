@@ -202,24 +202,24 @@ public class Game extends JPanel implements KeyListener, ActionListener {
         // ===== GAME OVER =====
         else if (currentState == State.GAME_OVER) {
             g.setColor(Color.RED);
-            // Dirender menggunakan getWidth() agar center di layar penuh
-            drawCenteredString(g, "Anda Kalah!", H / 2 - 40, new Font("Monospaced", Font.BOLD, 40), 0, getWidth());
-            tampilkanOpsiMenu(g);
+            // Dirender menggunakan area game saja (UI_W, GAME_W) agar tidak menabrak UI log di kiri
+            drawCenteredString(g, "Anda Kalah!", H / 2 - 40, new Font("Monospaced", Font.BOLD, 40), UI_W, GAME_W);
+            tampilkanOpsiMenu(g, UI_W, GAME_W);
         }
 
         // ===== WIN / ENDING =====
         else if (currentState == State.WIN) {
             g.setColor(Color.GREEN);
-            drawCenteredString(g, "BALAS DENDAM SELESAI", H / 2 - 90, new Font("Monospaced", Font.BOLD, 36), 0, getWidth() + 30);
+            drawCenteredString(g, "BALAS DENDAM SELESAI", H / 2 - 90, new Font("Monospaced", Font.BOLD, 36), UI_W, GAME_W);
 
             // Teks Cerita Penutup
             g.setColor(Color.WHITE);
             Font endingFont = new Font("Monospaced", Font.PLAIN, 18);
-            drawCenteredString(g, "Pimpinan mereka akhirnya tersungkur di hadapanku.", H / 2 - 30, endingFont, 0, getWidth() + 30);
-            drawCenteredString(g, "Rasa sakit yang ditanggung kakakku kini telah terbayar lunas.", H / 2, endingFont, 0, getWidth() + 30);
-            drawCenteredString(g, "Tidak akan ada lagi yang berani mengusik kami.", H / 2 + 30, endingFont, 0, getWidth() + 30);
+            drawCenteredString(g, "Pimpinan mereka akhirnya tersungkur di hadapanku.", H / 2 - 30, endingFont, UI_W, GAME_W);
+            drawCenteredString(g, "Rasa sakit yang ditanggung kakakku kini telah terbayar lunas.", H / 2, endingFont, UI_W, GAME_W);
+            drawCenteredString(g, "Tidak akan ada lagi yang berani mengusik kami.", H / 2 + 30, endingFont, UI_W, GAME_W);
 
-            tampilkanOpsiMenu(g);
+            tampilkanOpsiMenu(g, UI_W, GAME_W);
         }
 
         if (flashAlpha > 0) {
@@ -605,13 +605,13 @@ public class Game extends JPanel implements KeyListener, ActionListener {
     @Override
     public void keyTyped(KeyEvent e) {}
 
-    private void tampilkanOpsiMenu(Graphics g) {
+    private void tampilkanOpsiMenu(Graphics g, int startX, int areaWidth) {
         g.setColor(Color.YELLOW);
         Font fontOpsi = new Font("Monospaced", Font.BOLD, 16);
 
-        // Opsi Restart dan Menu ditarik lebih ke bawah (H / 2 + 100) dan di-center di layar penuh (0, getWidth())
-        drawCenteredString(g, "[R] Restart", H / 2 + 100, fontOpsi, 0, getWidth());
-        drawCenteredString(g, "[M] Main Menu", H / 2 + 130, fontOpsi, 0, getWidth());
+        // Opsi Restart dan Menu di-center sesuai dengan area game yang ditentukan (agar tidak menabrak UI log di kiri)
+        drawCenteredString(g, "[R] Restart", H / 2 + 100, fontOpsi, startX, areaWidth);
+        drawCenteredString(g, "[M] Main Menu", H / 2 + 130, fontOpsi, startX, areaWidth);
     }
 
     // Method Helper Baru untuk Komputasi Titik Tengah String
