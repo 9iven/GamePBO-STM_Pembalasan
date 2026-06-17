@@ -10,6 +10,7 @@ import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 import java.io.IOException;
 import java.io.File;
+import java.io.InputStream;
 
 // Class untuk mengurus semua proses rendering (penggambaran pixel) ke layar
 public class Renderer {
@@ -25,26 +26,47 @@ public class Renderer {
     private BufferedImage imgKelasTembok, imgTangga, imgTembokLuar;
 
     private BufferedImage loadImage(String path) {
+        // 1. Coba memuat dari classpath resource (getResourceAsStream) dengan berbagai class loader
         try {
-            // 1. Coba memuat dari classpath resource
-            java.net.URL url = getClass().getResource("/assets/" + path);
-            if (url != null) {
-                return ImageIO.read(url);
+            InputStream is = Renderer.class.getResourceAsStream("/assets/" + path);
+            if (is == null) {
+                is = Renderer.class.getClassLoader().getResourceAsStream("assets/" + path);
             }
-            // 2. Coba memuat dari folder fisik "src/assets/"
+            if (is == null) {
+                is = Thread.currentThread().getContextClassLoader().getResourceAsStream("assets/" + path);
+            }
+            if (is != null) {
+                try {
+                    return ImageIO.read(is);
+                } finally {
+                    is.close();
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Gagal membaca classpath resource " + path + ": " + e.getMessage());
+        }
+
+        // 2. Coba memuat dari folder fisik "src/assets/" dengan pemeriksaan lengkap
+        try {
             File fileSrc = new File("src/assets/" + path);
-            if (fileSrc.exists()) {
+            if (fileSrc.exists() && fileSrc.isFile() && fileSrc.canRead()) {
                 return ImageIO.read(fileSrc);
             }
-            // 3. Coba memuat dari folder fisik "assets/"
+        } catch (Exception e) {
+            System.out.println("Gagal membaca file fisik src/assets/" + path + ": " + e.getMessage());
+        }
+
+        // 3. Coba memuat dari folder fisik "assets/" dengan pemeriksaan lengkap
+        try {
             File fileDirect = new File("assets/" + path);
-            if (fileDirect.exists()) {
+            if (fileDirect.exists() && fileDirect.isFile() && fileDirect.canRead()) {
                 return ImageIO.read(fileDirect);
             }
-            System.out.println("Aset tidak ditemukan: " + path);
-        } catch (IOException e) {
-            System.out.println("Gagal memuat gambar aset " + path + ": " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Gagal membaca file fisik assets/" + path + ": " + e.getMessage());
         }
+
+        System.out.println("Aset tidak ditemukan: " + path);
         return null;
     }
 

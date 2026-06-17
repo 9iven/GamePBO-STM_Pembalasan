@@ -10,23 +10,31 @@ public class SoundManager {
     private static Clip bgmClip;
 
     private static java.net.URL getSoundURL(String soundPath) {
-        // 1. Coba memuat dari classpath resource
+        // 1. Coba memuat dari classpath resource dengan berbagai class loader
         java.net.URL url = SoundManager.class.getResource("/assets/audio/" + soundPath);
+        if (url == null) {
+            url = SoundManager.class.getClassLoader().getResource("assets/audio/" + soundPath);
+        }
+        if (url == null) {
+            url = Thread.currentThread().getContextClassLoader().getResource("assets/audio/" + soundPath);
+        }
         if (url != null) {
             return url;
         }
+
         // 2. Coba memuat dari folder fisik "src/assets/audio/"
         File fileSrc = new File("src/assets/audio/" + soundPath);
-        if (fileSrc.exists()) {
+        if (fileSrc.exists() && fileSrc.isFile() && fileSrc.canRead()) {
             try {
                 return fileSrc.toURI().toURL();
             } catch (Exception e) {
                 // Ignore
             }
         }
+
         // 3. Coba memuat dari folder fisik "assets/audio/"
         File fileDirect = new File("assets/audio/" + soundPath);
-        if (fileDirect.exists()) {
+        if (fileDirect.exists() && fileDirect.isFile() && fileDirect.canRead()) {
             try {
                 return fileDirect.toURI().toURL();
             } catch (Exception e) {
