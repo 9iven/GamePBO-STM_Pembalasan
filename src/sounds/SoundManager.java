@@ -9,14 +9,41 @@ public class SoundManager {
     // Variabel untuk menyimpan BGM agar bisa di-loop dan dihentikan
     private static Clip bgmClip;
 
+    private static java.net.URL getSoundURL(String soundPath) {
+        // 1. Coba memuat dari classpath resource
+        java.net.URL url = SoundManager.class.getResource("/assets/audio/" + soundPath);
+        if (url != null) {
+            return url;
+        }
+        // 2. Coba memuat dari folder fisik "src/assets/audio/"
+        File fileSrc = new File("src/assets/audio/" + soundPath);
+        if (fileSrc.exists()) {
+            try {
+                return fileSrc.toURI().toURL();
+            } catch (Exception e) {
+                // Ignore
+            }
+        }
+        // 3. Coba memuat dari folder fisik "assets/audio/"
+        File fileDirect = new File("assets/audio/" + soundPath);
+        if (fileDirect.exists()) {
+            try {
+                return fileDirect.toURI().toURL();
+            } catch (Exception e) {
+                // Ignore
+            }
+        }
+        return null;
+    }
+
     public static void play(String soundName) {
         System.out.println("[AUDIO SFX] Memainkan: " + soundName);
         try {
-            File soundFile = new File("src/assets/audio/" + soundName + ".wav");
+            java.net.URL soundURL = getSoundURL(soundName + ".wav");
 
             // putar file wav
-            if (soundFile.exists()) {
-                AudioInputStream audioIn = AudioSystem.getAudioInputStream(soundFile);
+            if (soundURL != null) {
+                AudioInputStream audioIn = AudioSystem.getAudioInputStream(soundURL);
                 Clip clip = AudioSystem.getClip();
                 clip.open(audioIn);
 
@@ -46,9 +73,9 @@ public class SoundManager {
             // Matikan BGM sebelumnya (jika ada) sebelum memutar yang baru
             stopBGM();
 
-            File soundFile = new File("src/assets/audio/" + bgmName + ".wav");
-            if (soundFile.exists()) {
-                AudioInputStream audioIn = AudioSystem.getAudioInputStream(soundFile);
+            java.net.URL soundURL = getSoundURL(bgmName + ".wav");
+            if (soundURL != null) {
+                AudioInputStream audioIn = AudioSystem.getAudioInputStream(soundURL);
                 bgmClip = AudioSystem.getClip();
                 bgmClip.open(audioIn);
 

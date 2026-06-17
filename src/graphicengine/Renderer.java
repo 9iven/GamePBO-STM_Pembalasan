@@ -24,28 +24,46 @@ public class Renderer {
     private BufferedImage imgBossBully, imgBullyKroco, imgGuru, imgSiswi;
     private BufferedImage imgKelasTembok, imgTangga, imgTembokLuar;
 
-    public Renderer() {
+    private BufferedImage loadImage(String path) {
         try {
-            // Memuat gambar dari folder fisik menggunakan File (Menghindari null pointer pada build)
-            imgDepan = ImageIO.read(new File("src/assets/karakter/mc_depan.png"));
-            imgBelakang = ImageIO.read(new File("src/assets/karakter/mc_belakang.png"));
-            imgKanan = ImageIO.read(new File("src/assets/karakter/mc_samping_kanan.png"));
-            imgKiri = ImageIO.read(new File("src/assets/karakter/mc_samping_kiri.png"));
-            imgRumput = ImageIO.read(new File("src/assets/lantai/rumput.png"));
-            imgKelasLantai = ImageIO.read(new File("src/assets/lantai/kelas_lantai.png"));
-
-            // Memuat aset tambahan baru
-            imgBossBully = ImageIO.read(new File("src/assets/karakter/boss_bully.png"));
-            imgBullyKroco = ImageIO.read(new File("src/assets/karakter/bully_kroco.png"));
-            imgGuru = ImageIO.read(new File("src/assets/karakter/glantai.png"));
-            imgSiswi = ImageIO.read(new File("src/assets/karakter/slantai.png"));
-            imgKelasTembok = ImageIO.read(new File("src/assets/tembok/kelas_tembok.png"));
-            imgTangga = ImageIO.read(new File("src/assets/tembok/tangga.png"));
-            imgTembokLuar = ImageIO.read(new File("src/assets/tembok/tembok_luar.png"));
-
-        } catch (IOException | NullPointerException e) {
-            System.out.println("Gagal memuat gambar aset: " + e.getMessage());
+            // 1. Coba memuat dari classpath resource
+            java.net.URL url = getClass().getResource("/assets/" + path);
+            if (url != null) {
+                return ImageIO.read(url);
+            }
+            // 2. Coba memuat dari folder fisik "src/assets/"
+            File fileSrc = new File("src/assets/" + path);
+            if (fileSrc.exists()) {
+                return ImageIO.read(fileSrc);
+            }
+            // 3. Coba memuat dari folder fisik "assets/"
+            File fileDirect = new File("assets/" + path);
+            if (fileDirect.exists()) {
+                return ImageIO.read(fileDirect);
+            }
+            System.out.println("Aset tidak ditemukan: " + path);
+        } catch (IOException e) {
+            System.out.println("Gagal memuat gambar aset " + path + ": " + e.getMessage());
         }
+        return null;
+    }
+
+    public Renderer() {
+        imgDepan = loadImage("karakter/mc_depan.png");
+        imgBelakang = loadImage("karakter/mc_belakang.png");
+        imgKanan = loadImage("karakter/mc_samping_kanan.png");
+        imgKiri = loadImage("karakter/mc_samping_kiri.png");
+        imgRumput = loadImage("lantai/rumput.png");
+        imgKelasLantai = loadImage("lantai/kelas_lantai.png");
+
+        // Memuat aset tambahan baru
+        imgBossBully = loadImage("karakter/boss_bully.png");
+        imgBullyKroco = loadImage("karakter/bully_kroco.png");
+        imgGuru = loadImage("karakter/glantai.png");
+        imgSiswi = loadImage("karakter/slantai.png");
+        imgKelasTembok = loadImage("tembok/kelas_tembok.png");
+        imgTangga = loadImage("tembok/tangga.png");
+        imgTembokLuar = loadImage("tembok/tembok_luar.png");
     }
 
     public void drawWorld(Graphics g, Map map, Player player, ArrayList<Enemy> enemies, int uiWidth) {

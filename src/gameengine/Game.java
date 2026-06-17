@@ -54,11 +54,17 @@ public class Game extends JPanel implements KeyListener, ActionListener {
 
         setFocusable(true);
         addKeyListener(this);
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                requestFocusInWindow();
+            }
+        });
 
         gameMap.loadLevelPosition(player);
         enemies = gameMap.getEnemiesForCurrentLevel();
 
-        logMessage("Sistem Aktif. WASD: Bergerak");
+        logMessage("Sistem Aktif. WASD/Panah: Gerak");
 
         gameLoop = new Timer(16, this);
 
@@ -316,10 +322,10 @@ public class Game extends JPanel implements KeyListener, ActionListener {
         int dx = 0;
         int dy = 0;
 
-        if (key == KeyEvent.VK_W) dy = -1;
-        if (key == KeyEvent.VK_S) dy = 1;
-        if (key == KeyEvent.VK_A) dx = -1;
-        if (key == KeyEvent.VK_D) dx = 1;
+        if (key == KeyEvent.VK_W || key == KeyEvent.VK_UP) dy = -1;
+        if (key == KeyEvent.VK_S || key == KeyEvent.VK_DOWN) dy = 1;
+        if (key == KeyEvent.VK_A || key == KeyEvent.VK_LEFT) dx = -1;
+        if (key == KeyEvent.VK_D || key == KeyEvent.VK_RIGHT) dx = 1;
 
         if (dx != 0 || dy != 0) {
 
@@ -463,7 +469,9 @@ public class Game extends JPanel implements KeyListener, ActionListener {
 
         if (
                 key == KeyEvent.VK_A ||
-                        key == KeyEvent.VK_W
+                        key == KeyEvent.VK_W ||
+                        key == KeyEvent.VK_LEFT ||
+                        key == KeyEvent.VK_UP
         ) {
 
             playerSelection =
@@ -474,7 +482,9 @@ public class Game extends JPanel implements KeyListener, ActionListener {
 
         if (
                 key == KeyEvent.VK_D ||
-                        key == KeyEvent.VK_S
+                        key == KeyEvent.VK_S ||
+                        key == KeyEvent.VK_RIGHT ||
+                        key == KeyEvent.VK_DOWN
         ) {
 
             playerSelection =

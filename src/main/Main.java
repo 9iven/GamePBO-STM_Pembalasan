@@ -19,6 +19,9 @@ public class Main {
         window.setLocationRelativeTo(null);
         window.setVisible(true);
 
+        // Meminta fokus keyboard agar langsung menerima input saat game terbuka
+        gamePanel.requestFocusInWindow();
+
         gamePanel.startGameLoop();
     }
 }
